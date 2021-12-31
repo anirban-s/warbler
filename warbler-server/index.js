@@ -6,6 +6,7 @@ const app = express();
 const errorHandler = require("./handlers/error");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
+const { loginRequired, ensureCorrectuser } = require("./middleware/auth");
 
 const PORT = 8081;
 
@@ -14,7 +15,27 @@ app.use(bodyParser.json());
 
 // all routes goes here
 app.use("/api/auth", authRoutes);
-app.use("/api/users/:id/messages", messageRoutes);
+app.use(
+  "/api/users/:id/messages",
+  loginRequired,
+  ensureCorrectuser,
+  messageRoutes
+);
+
+app.get("/api/messages", loginRequired, async (req, res, next) => {
+  try {
+    let messages = await db.Message.find()
+      .sort({ createdAt: "desc" })
+      .populate("user", {
+        username: true,
+        profileImageUrl: true,
+      });
+
+    return res.status(200).json(messages);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 // Global error handling
 app.use((req, res, next) => {

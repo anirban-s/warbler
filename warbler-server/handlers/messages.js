@@ -19,5 +19,24 @@ exports.createMessage = async (req, res, next) => {
     return next(err);
   }
 };
-exports.getMessage = async (req, res, next) => {};
-exports.deleteMessage = async (req, res, next) => {};
+
+// GET- api/users/:id/messages/:message_id
+exports.getMessage = async (req, res, next) => {
+  try {
+    let message = await db.Message.find(req.params.message_id);
+    return res.status(200).json(message);
+  } catch (err) {
+    return res.next(err);
+  }
+};
+
+// DELETE- api/users/:id/messages/:message_id
+exports.deleteMessage = async (req, res, next) => {
+  try {
+    let foundMessage = await db.Message.findById(req.params.message_id);
+    await foundMessage.remove();
+    return res.status(200).json(foundMessage);
+  } catch (err) {
+    return res.next(err);
+  }
+};
