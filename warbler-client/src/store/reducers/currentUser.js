@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { SET_CURRENT_USER } from "../actionTypes";
 
 const DEFAULT_STATE = {
