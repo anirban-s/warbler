@@ -26,8 +26,9 @@ exports.loginRequired = (req, res, next) => {
 exports.ensureCorrectuser = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
+    console.log(token, process.env.SECRET_KEY);
     jwt.verify(token, process.env.SECRET_KEY, function (err, docoded) {
-      if (decoded && decoded.id === req.params.id) {
+      if (docoded && docoded.id === req.params.id) {
         return next();
       }
       return next({
